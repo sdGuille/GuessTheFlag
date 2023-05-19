@@ -10,10 +10,22 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         ZStack {
-            RadialGradient(gradient: Gradient(colors: [.red, .black]),
-                           center: .center,
-                           startRadius: 20, endRadius: 200
-            )
+            VStack {
+                Button("Button 1") { }
+                    .buttonStyle(.bordered)
+                Button("Button 2", role: .destructive) { }
+                    .buttonStyle(.bordered)
+                Button("Button1") { }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.teal)
+                Button("Button1", role: .destructive) { }
+                    .buttonStyle(.borderedProminent)
+                Button {
+                    print("Tap this button")
+                } label: {
+                    Image(systemName: "pencil")
+                }
+            }
         }
         .ignoresSafeArea()
         
