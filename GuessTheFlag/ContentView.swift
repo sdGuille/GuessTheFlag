@@ -17,10 +17,13 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [.indigo, .gray]), startPoint: .top, endPoint: .bottom)
+            RadialGradient(stops: [
+                .init(color: Color(red: 0.1, green: 0.1, blue: 0.1), location: 0.3),
+                    .init(color: Color(red: 0.76, green: 0.60, blue: 0.40), location: 0.3),
+            ], center: .top, startRadius: 200, endRadius: 300)
                 .ignoresSafeArea()
             
-            VStack(spacing: 30) {
+            VStack(spacing: 15) {
                 VStack {
                     Text("Tap the flag of")
                         .foregroundColor(.white)
