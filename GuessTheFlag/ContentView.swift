@@ -14,6 +14,8 @@ struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     
     @State private var correctAnswer = Int.random(in: 0...2 )
+    @State private var userScore = 0
+    @State private var counter = 1
     
     var body: some View {
         ZStack {
@@ -57,7 +59,7 @@ struct ContentView: View {
                 Spacer()
                 Spacer()
                 
-                Text("Socre: \(scoreTitle)")
+                Text("Socre: \(userScore)")
                     .foregroundColor(.white)
                     .font(.title.bold())
                 Spacer()
@@ -65,18 +67,34 @@ struct ContentView: View {
             .padding()
         }
         .alert(scoreTitle, isPresented: $showingScore) {
-            Button("Continue", action: askQuestion)
+            if counter != 10 {
+                Button("Continue", action: askQuestion)
+            } else {
+                Button("Reset", action: resetValues)
+            }
         } message: {
-            Text("Your score is \(scoreTitle)")
+            if counter != 10 {
+                Text("Your score is \(userScore)")
+            } else {
+                Text("Your final score is \(userScore). tap the reset button")
+            }
         }
         
     }
     
+    func resetValues() {
+        countries.shuffle()
+        correctAnswer = Int.random(in: 0...2)
+        counter = 1
+        userScore = 0
+    }
+    
     func flagTapped(_ number: Int) {
         if number == correctAnswer {
-            scoreTitle = "Correct"
+            scoreTitle = "Correct! The flag is \(countries[number])"
+            userScore += 10
         } else {
-            scoreTitle = "Wrong"
+            scoreTitle = "Wrong! That's the flag of \(countries[number]) 😕"
         }
         
         showingScore = true
@@ -85,6 +103,7 @@ struct ContentView: View {
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        counter += 1
     }
 }
 
