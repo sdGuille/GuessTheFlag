@@ -44,6 +44,11 @@ struct ContentView: View {
     @State private var userScore = 0
     @State private var counter = 1
     
+    @State private var selectedNumber = 0
+    @State private var animationAmount = 0.0
+    @State private var isOpaque = false
+    @State private var isWrong = false
+    
     var body: some View {
         ZStack {
             RadialGradient(stops: [
@@ -71,7 +76,14 @@ struct ContentView: View {
                             flagTapped(number)
                         } label: {
                             FlagImage(countries: countries, number: number)
+                                .rotation3DEffect(.degrees(shouldRotate(number) ?  animationAmount : 0.0),
+                                                  axis: (x: 0.0, y: 1.0, z: 0.0))
+                                .opacity(self.isOpaque && self.correctAnswer != number ? 0.25 : 1.0)
+                                
                         }
+                        .rotation3DEffect(.degrees(self.isWrong && self.selectedNumber == number ? 90.0 : 0.0), axis: (x: 0, y: 0, z: 1))
+                        
+                        
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -105,6 +117,14 @@ struct ContentView: View {
         
     }
     
+    func shouldRotate(_ number: Int) -> Bool {
+        var rotate = false
+        if number == correctAnswer {
+            rotate = true
+        }
+        return rotate
+    }
+    
     func resetValues() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
@@ -113,20 +133,31 @@ struct ContentView: View {
     }
     
     func flagTapped(_ number: Int) {
+        self.selectedNumber = number
         if number == correctAnswer {
             scoreTitle = "Correct! The flag is \(countries[number])"
             userScore += 10
+            self.isOpaque = true
+            withAnimation {
+                self.animationAmount += 360
+            }
         } else {
             scoreTitle = "Wrong! That's the flag of \(countries[number]) 😕"
+            isWrong = true
         }
         
-        showingScore = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            showingScore = true
+
+        }
     }
     
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
         counter += 1
+        self.isOpaque = false
+        isWrong = false
     }
 }
 
